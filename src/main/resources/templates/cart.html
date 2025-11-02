@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Cart | GreenCart</title>
+  <style>
+    body { font-family: Arial; background: #f4f9f7; padding: 30px; }
+    table { width: 80%; margin: auto; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+    th { background: #2d6a4f; color: white; }
+    img { width: 80px; height: 80px; border-radius: 5px; }
+    .total { margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.2em; }
+    button { padding: 6px 12px; background: #b7e4c7; border: none; cursor: pointer; }
+    button:hover { background: #95d5b2; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">🛒 My Cart</h2>
+  <table id="cartTable">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price (₹)</th>
+        <th>Qty</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="total" id="totalPrice"></div>
+
+  <script>
+    function loadCart() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const tbody = document.querySelector("#cartTable tbody");
+      tbody.innerHTML = "";
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><img src="${item.imageUrl}" alt="${item.name}"></td>
+          <td>${item.name}</td>
+          <td>${item.price}</td>
+          <td>${item.quantity}</td>
+          <td><button onclick="removeFromCart(${index})">Remove</button></td>
+        `;
+        tbody.appendChild(row);
+        total += item.price * item.quantity;
+      });
+
+      document.getElementById("totalPrice").textContent = `Total: ₹${total.toFixed(2)}`;
+    }
+
+    function removeFromCart(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCart);
+  </script>
+</body>
+</html>

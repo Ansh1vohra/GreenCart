@@ -1,39 +1,391 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Add Product</title>
+  <title>Add Product | GreenCart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2d6a4f;
+      --primary-light: #40916c;
+      --primary-dark: #1b4332;
+      --secondary: #d8e2dc;
+      --accent: #8d99ae;
+      --text: #333;
+      --text-light: #555;
+      --white: #ffffff;
+      --light-bg: #f4f9f7;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --error: #e63946;
+      --success: #2a9d8f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+
+    .logo h1 {
+      font-size: 2.2rem;
+      color: var(--primary-dark);
+    }
+
+    .seller-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--primary-light);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-container {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-header h2 {
+      color: var(--primary-dark);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+      color: var(--text-light);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px 12px 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+    }
+
+    .file-input-container {
+      position: relative;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 15px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-input-label:hover {
+      border-color: var(--primary);
+      background-color: rgba(45, 106, 79, 0.05);
+    }
+
+    .file-input-label i {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .file-input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-name {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px 30px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-block {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 2rem;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary-dark);
+    }
+
+    .message {
+      background-color: rgba(46, 125, 50, 0.1);
+      color: var(--success);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+      text-align: center;
+      border-left: 4px solid var(--success);
+      display: none;
+    }
+
+    .message.error {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--error);
+      border-left-color: var(--error);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-secondary {
+      background-color: var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background-color: #6c757d;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-container {
+        padding: 2rem;
+      }
+      
+      .logo h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 1.5rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Add New Product</h2>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        <h1>GreenCart</h1>
+      </div>
+      <div class="seller-badge">
+        <i class="fas fa-store"></i>
+        <span>Seller Product Management</span>
+      </div>
+    </div>
 
-  <form id="productForm">
-    <label>Name:</label>
-    <input type="text" id="name" required><br>
+    <div class="form-container">
+      <div class="form-header">
+        <h2>Add New Sustainable Product</h2>
+        <p>List your eco-friendly products to reach conscious consumers</p>
+      </div>
 
-    <label>Description:</label>
-    <textarea id="description" required></textarea><br>
+      <form id="productForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Product Name</label>
+            <div class="input-with-icon">
+              <i class="fas fa-tag"></i>
+              <input type="text" id="name" placeholder="Enter product name" required>
+            </div>
+          </div>
 
-    <label>Price:</label>
-    <input type="number" id="price" required><br>
+          <div class="form-group">
+            <label for="price">Price ($)</label>
+            <div class="input-with-icon">
+              <i class="fas fa-dollar-sign"></i>
+              <input type="number" id="price" placeholder="0.00" min="0" step="0.01" required>
+            </div>
+          </div>
 
-    <label>Category:</label>
-    <input type="text" id="category" required><br>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <div class="input-with-icon">
+              <i class="fas fa-layer-group"></i>
+              <input type="text" id="category" placeholder="e.g., Organic Food, Handmade Crafts" required>
+            </div>
+          </div>
 
-    <label>Stock:</label>
-    <input type="number" id="stock" required><br>
+          <div class="form-group">
+            <label for="stock">Stock Quantity</label>
+            <div class="input-with-icon">
+              <i class="fas fa-boxes"></i>
+              <input type="number" id="stock" placeholder="Available quantity" min="0" required>
+            </div>
+          </div>
 
-    <label>Location:</label>
-    <input type="text" id="location" required><br>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <div class="input-with-icon">
+              <i class="fas fa-map-marker-alt"></i>
+              <input type="text" id="location" placeholder="City, State" required>
+            </div>
+          </div>
 
-    <label>Image:</label>
-    <input type="file" id="image" accept="image/*" required><br>
+          <div class="form-group full-width">
+            <label for="description">Product Description</label>
+            <div class="input-with-icon">
+              <i class="fas fa-file-alt"></i>
+              <textarea id="description" placeholder="Describe your product, its sustainable features, and benefits..." required></textarea>
+            </div>
+          </div>
 
-    <button type="submit">Add Product</button>
-  </form>
+          <div class="form-group full-width">
+            <label>Product Image</label>
+            <div class="file-input-container">
+              <label class="file-input-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Choose product image</span>
+                <input type="file" id="image" class="file-input" accept="image/*" required>
+              </label>
+            </div>
+            <div class="file-name" id="fileName">No file chosen</div>
+          </div>
+        </div>
 
-  <p id="message"></p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-block">
+            <i class="fas fa-plus-circle"></i> Add Sustainable Product
+          </button>
+        </div>
+      </form>
 
-  <a href="/sellers/dashboard">⬅ Back to Dashboard</a>
+      <div id="message" class="message"></div>
+
+      <a href="/sellers/dashboard" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
 
   <script>
     document.getElementById("productForm").addEventListener("submit", async (e) => {
@@ -62,16 +414,31 @@
           body: formData
         });
 
+        const messageElement = document.getElementById("message");
         if (res.ok) {
-          document.getElementById("message").textContent = "✅ Product added successfully!";
+          messageElement.textContent = "✅ Product added successfully!";
+          messageElement.className = "message";
+          messageElement.style.display = 'block';
           document.getElementById("productForm").reset();
+          document.getElementById("fileName").textContent = "No file chosen";
         } else {
-          document.getElementById("message").textContent = "❌ Failed to add product.";
+          messageElement.textContent = "❌ Failed to add product. Please try again.";
+          messageElement.className = "message error";
+          messageElement.style.display = 'block';
         }
       } catch (error) {
         console.error(error);
-        document.getElementById("message").textContent = "⚠️ Error: " + error.message;
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = "⚠️ Error: " + error.message;
+        messageElement.className = "message error";
+        messageElement.style.display = 'block';
       }
+    });
+
+    // File input display
+    document.getElementById("image").addEventListener("change", function(e) {
+      const fileName = this.files[0] ? this.files[0].name : "No file chosen";
+      document.getElementById("fileName").textContent = fileName;
     });
   </script>
 </body>

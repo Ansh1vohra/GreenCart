@@ -1,27 +1,412 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>My Products</title>
+  <title>My Products | GreenCart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2d6a4f;
+      --primary-light: #40916c;
+      --primary-dark: #1b4332;
+      --secondary: #d8e2dc;
+      --accent: #8d99ae;
+      --text: #333;
+      --text-light: #555;
+      --white: #ffffff;
+      --light-bg: #f4f9f7;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --error: #e63946;
+      --success: #2a9d8f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+
+    .logo h1 {
+      font-size: 2.2rem;
+      color: var(--primary-dark);
+    }
+
+    .seller-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--primary-light);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      background: var(--white);
+      padding: 1.5rem 2rem;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    .page-title h2 {
+      color: var(--primary-dark);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-title p {
+      color: var(--text-light);
+    }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border-left: 4px solid var(--primary);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .products-section {
+      background: var(--white);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: var(--white);
+    }
+
+    .section-header h3 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .products-table thead {
+      background-color: var(--secondary);
+    }
+
+    .products-table th {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .products-table td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .products-table tbody tr {
+      transition: background-color 0.3s ease;
+    }
+
+    .products-table tbody tr:hover {
+      background-color: rgba(45, 106, 79, 0.05);
+    }
+
+    .product-name {
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .product-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: var(--secondary);
+      color: var(--primary-dark);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .price {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .stock {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .stock.in-stock {
+      background-color: rgba(46, 125, 50, 0.1);
+      color: var(--success);
+    }
+
+    .stock.low-stock {
+      background-color: rgba(255, 152, 0, 0.1);
+      color: #ff9800;
+    }
+
+    .stock.out-of-stock {
+      background-color: rgba(229, 57, 53, 0.1);
+      color: var(--error);
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-light);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-light);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-dark);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary-dark);
+    }
+
+    .message {
+      background-color: rgba(45, 106, 79, 0.1);
+      color: var(--primary-dark);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-align: center;
+      border-left: 4px solid var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .page-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .products-table {
+        font-size: 0.9rem;
+      }
+      
+      .products-table th,
+      .products-table td {
+        padding: 0.75rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .logo h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>My Products</h2>
-  <table border="1" id="productTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Price</th>
-        <th>Stock</th>
-        <th>Location</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        <h1>GreenCart</h1>
+      </div>
+      <div class="seller-badge">
+        <i class="fas fa-store"></i>
+        <span>Seller Product Management</span>
+      </div>
+    </div>
 
-  <p id="message"></p>
+    <div class="page-header">
+      <div class="page-title">
+        <h2><i class="fas fa-boxes"></i> My Products</h2>
+        <p>Manage your sustainable product listings</p>
+      </div>
+      <a href="/sellers/add-product" class="btn">
+        <i class="fas fa-plus"></i> Add New Product
+      </a>
+    </div>
 
-  <a href="/sellers/dashboard">⬅ Back to Dashboard</a>
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-number" id="totalProducts">0</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="inStockProducts">0</div>
+        <div class="stat-label">In Stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="lowStockProducts">0</div>
+        <div class="stat-label">Low Stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="categoriesCount">0</div>
+        <div class="stat-label">Categories</div>
+      </div>
+    </div>
+
+    <div class="products-section">
+      <div class="section-header">
+        <h3><i class="fas fa-list"></i> Product Inventory</h3>
+      </div>
+      
+      <div class="table-container">
+        <table class="products-table" id="productTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fas fa-box-open"></i>
+        <h3>No Products Found</h3>
+        <p>You haven't added any products yet. Start by adding your first sustainable product!</p>
+        <a href="/sellers/add-product" class="btn" style="margin-top: 1rem;">
+          <i class="fas fa-plus"></i> Add Your First Product
+        </a>
+      </div>
+    </div>
+
+    <div id="message" class="message" style="display: none;"></div>
+
+    <a href="/sellers/dashboard" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
 
   <script>
     async function loadProducts() {
@@ -36,29 +421,73 @@
         const res = await fetch("/api/products/all");
         const data = await res.json();
         const tbody = document.querySelector("#productTable tbody");
+        const emptyState = document.getElementById("emptyState");
+        const messageElement = document.getElementById("message");
 
         const sellerProducts = data.filter(p => p.seller && p.seller.id == sellerId);
 
         if (sellerProducts.length === 0) {
-          document.getElementById("message").textContent = "No products found for this seller.";
+          document.getElementById("productTable").style.display = 'none';
+          emptyState.style.display = 'block';
+          messageElement.style.display = 'none';
         } else {
+          emptyState.style.display = 'none';
+          document.getElementById("productTable").style.display = 'table';
+          messageElement.style.display = 'none';
+
+          // Update statistics
+          updateStatistics(sellerProducts);
+
           sellerProducts.forEach(p => {
             const row = document.createElement("tr");
+            
+            // Determine stock status
+            let stockClass = 'in-stock';
+            let stockIcon = 'fas fa-check';
+            let stockText = p.stock;
+            
+            if (p.stock === 0) {
+              stockClass = 'out-of-stock';
+              stockIcon = 'fas fa-times';
+              stockText = 'Out of Stock';
+            } else if (p.stock < 10) {
+              stockClass = 'low-stock';
+              stockIcon = 'fas fa-exclamation-triangle';
+              stockText = `${p.stock} (Low)`;
+            }
+
             row.innerHTML = `
-              <td>${p.id}</td>
-              <td>${p.name}</td>
-              <td>${p.category}</td>
-              <td>${p.price}</td>
-              <td>${p.stock}</td>
-              <td>${p.location}</td>
+              <td>
+                <div class="product-name">${p.name}</div>
+                <small style="color: var(--text-light);">ID: ${p.id}</small>
+              </td>
+              <td><span class="product-category"><i class="fas fa-tag"></i> ${p.category}</span></td>
+              <td class="price">$${parseFloat(p.price).toFixed(2)}</td>
+              <td><span class="stock ${stockClass}"><i class="${stockIcon}"></i> ${stockText}</span></td>
+              <td><span class="location"><i class="fas fa-map-marker-alt"></i> ${p.location}</span></td>
             `;
             tbody.appendChild(row);
           });
         }
       } catch (error) {
         console.error(error);
-        document.getElementById("message").textContent = "⚠️ Error loading products.";
+        const messageElement = document.getElementById("message");
+        messageElement.textContent = "⚠️ Error loading products. Please try again.";
+        messageElement.style.display = 'block';
       }
+    }
+
+    function updateStatistics(products) {
+      document.getElementById('totalProducts').textContent = products.length;
+      
+      const inStock = products.filter(p => p.stock > 0).length;
+      document.getElementById('inStockProducts').textContent = inStock;
+      
+      const lowStock = products.filter(p => p.stock > 0 && p.stock < 10).length;
+      document.getElementById('lowStockProducts').textContent = lowStock;
+      
+      const categories = new Set(products.map(p => p.category)).size;
+      document.getElementById('categoriesCount').textContent = categories;
     }
 
     loadProducts();

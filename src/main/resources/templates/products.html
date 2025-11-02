@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>All Products - GreenCart</title>
     <style>
@@ -116,30 +117,65 @@
         }
     </style>
 </head>
-<body>
-<header>
-    <h1>Products</h1>
-</header>
 
-<div class="product-container">
-    <div class="product-card" th:each="p : ${products}">
-        <img th:src="${p.imageUrl}" alt="Product Image" />
-        <div class="product-info">
-            <h3 th:text="${p.name}">Product Name</h3>
-            <p class="price">₹<span th:text="${p.price}"></span></p>
-            <p><strong>Category:</strong> <span th:text="${p.category}"></span></p>
-            <p><strong>Stock:</strong> <span th:text="${p.stock}"></span></p>
-            <p><strong>Location:</strong> <span th:text="${p.location}"></span></p>
-        </div>
-        <div class="buttons">
-            <a class="details-btn" th:href="@{'/products/' + ${p.id}}">View Details</a>
-            <a class="cart-btn" th:href="@{'/cart/add/' + ${p.id}}">Add to Cart</a>
+<body>
+    <header>
+        <h1>Products</h1>
+    </header>
+
+    <script>
+        function addToCart(productId) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            // Avoid duplicates
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.quantity += 1;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                alert("Increased quantity in cart!");
+                return;
+            }
+
+            fetch(`/api/products/${productId}`)
+                .then(res => res.json())
+                .then(product => {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
+                        quantity: 1
+                    });
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    alert("✅ Product added to cart!");
+                })
+                .catch(err => console.error("Error adding to cart", err));
+        }
+
+    </script>
+
+
+    <div class="product-container">
+        <div class="product-card" th:each="p : ${products}">
+            <img th:src="${p.imageUrl}" alt="Product Image" />
+            <div class="product-info">
+                <h3 th:text="${p.name}">Product Name</h3>
+                <p class="price">₹<span th:text="${p.price}"></span></p>
+                <p><strong>Category:</strong> <span th:text="${p.category}"></span></p>
+                <p><strong>Stock:</strong> <span th:text="${p.stock}"></span></p>
+                <p><strong>Location:</strong> <span th:text="${p.location}"></span></p>
+            </div>
+            <div class="buttons">
+                <a class="details-btn" th:href="@{'/products/' + ${p.id}}">View Details</a>
+                <a class="cart-btn" href="#" th:onclick="'addToCart(' + ${p.id} + ')'">Add to Cart</a>
+
+            </div>
         </div>
     </div>
-</div>
 
-<footer>
-    <p>GreenCart © 2025 | Empowering Sustainable Local Commerce</p>
-</footer>
+    <footer>
+        <p>GreenCart © 2025 | Empowering Sustainable Local Commerce</p>
+    </footer>
 </body>
+
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Details | GreenCart</title>
+</head>
+<body>
+  <div id="product"></div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    fetch(`/api/products/${id}`)
+      .then(res => res.json())
+      .then(p => {
+        document.getElementById("product").innerHTML = `
+          <h2>${p.name}</h2>
+          <img src="${p.imageUrl}" width="300">
+          <p><strong>Price:</strong> ₹${p.price}</p>
+          <p><strong>Category:</strong> ${p.category}</p>
+          <p><strong>Description:</strong> ${p.description}</p>
+          <button onclick="addToCart(${p.id})">Add to Cart</button>
+        `;
+      });
+
+    function addToCart(id) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const exists = cart.find(x => x.id === id);
+      if (exists) return alert("Already in cart!");
+      fetch(`/api/products/${id}`)
+        .then(res => res.json())
+        .then(product => {
+          cart.push(product);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          alert("Added to cart!");
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,24 +1,316 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
   <title>Login | GreenCart</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2d6a4f;
+      --primary-light: #40916c;
+      --primary-dark: #1b4332;
+      --secondary: #d8e2dc;
+      --accent: #8d99ae;
+      --text: #333;
+      --text-light: #555;
+      --white: #ffffff;
+      --light-bg: #f4f9f7;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --error: #e63946;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+
+    .logo h1 {
+      font-size: 2.2rem;
+      color: var(--primary-dark);
+    }
+
+    .login-header p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    .login-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px 12px 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--text-light);
+    }
+
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .error-message {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--error);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 1.5rem;
+      text-align: center;
+      border-left: 4px solid var(--error);
+      display: none;
+    }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .remember-me input {
+      width: auto;
+    }
+
+    .forgot-password {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-password:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 2rem;
+      }
+      
+      .logo h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h2>Login</h2>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        <h1>GreenCart</h1>
+      </div>
+      <p>Welcome back to your sustainable marketplace</p>
+    </div>
 
-  <form th:action="@{/login}" method="post">
-    <label>Email:</label>
-    <input type="email" name="email" required><br>
+    <div class="login-card">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="Enter your email" required>
+          </div>
+        </div>
 
-    <label>Password:</label>
-    <input type="password" name="password" required><br>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Enter your password" required>
+          </div>
+        </div>
 
-    <button type="submit">Login</button>
-  </form>
+        <div class="remember-forgot">
+          <div class="remember-me">
+            <input type="checkbox" id="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
 
-  <p th:if="${error}" th:text="${error}" style="color:red"></p>
+        <button type="submit" class="btn">
+          <i class="fas fa-sign-in-alt"></i> Login to Your Account
+        </button>
+      </form>
 
-  <p>Don't have an account? <a th:href="@{/signup}">Sign up here</a></p>
+      <div class="login-footer">
+        <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+      </div>
+
+      <div id="error" class="error-message"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorElement = document.getElementById("error");
+
+      // Hide error message initially
+      errorElement.style.display = 'none';
+
+      try {
+        const response = await fetch("http://localhost:9090/api/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        // Try parsing as JSON first
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          // If backend sends plain text instead
+          const text = await response.text();
+          if (text.includes("Login successful")) {
+            alert("Login successful!");
+            window.location.href = "/products";
+            return;
+          } else {
+            errorElement.textContent = text || "Invalid email or password.";
+            errorElement.style.display = 'block';
+            return;
+          }
+        }
+
+        // If JSON response
+        if (response.ok) {
+          localStorage.setItem("userId", data.id || "");
+          localStorage.setItem("userName", data.name || "User");
+          alert(`Welcome ${data.name || "User"}!`);
+          window.location.href = "/products";
+        } else {
+          errorElement.textContent = data.error || "Invalid email or password.";
+          errorElement.style.display = 'block';
+        }
+
+      } catch (err) {
+        console.error(err);
+        errorElement.textContent = "Login failed. Please try again.";
+        errorElement.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
