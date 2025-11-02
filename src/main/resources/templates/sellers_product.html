@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>My Products</title>
+</head>
+<body>
+  <h2>My Products</h2>
+  <table border="1" id="productTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p id="message"></p>
+
+  <a href="/sellers/dashboard">⬅ Back to Dashboard</a>
+
+  <script>
+    async function loadProducts() {
+      const sellerId = localStorage.getItem("sellerId");
+      if (!sellerId) {
+        alert("⚠️ Seller not logged in!");
+        window.location.href = "/sellers/login";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/products/all");
+        const data = await res.json();
+        const tbody = document.querySelector("#productTable tbody");
+
+        const sellerProducts = data.filter(p => p.seller && p.seller.id == sellerId);
+
+        if (sellerProducts.length === 0) {
+          document.getElementById("message").textContent = "No products found for this seller.";
+        } else {
+          sellerProducts.forEach(p => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${p.id}</td>
+              <td>${p.name}</td>
+              <td>${p.category}</td>
+              <td>${p.price}</td>
+              <td>${p.stock}</td>
+              <td>${p.location}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById("message").textContent = "⚠️ Error loading products.";
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

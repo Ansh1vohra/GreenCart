@@ -14,16 +14,23 @@ public class SellerService {
     @Autowired
     private SellerRepository sellerRepository;
 
+    // 🟢 SIGNUP
     public ResponseEntity<?> signup(Seller seller) {
         if (sellerRepository.findByEmail(seller.getEmail()) != null) {
             return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body("Email already exists");
         }
-        sellerRepository.save(seller);
-        return ResponseEntity.ok("Seller signup successful");
+
+        Seller savedSeller = sellerRepository.save(seller);
+
+        // Hide password before sending back
+        savedSeller.setPassword(null);
+
+        return ResponseEntity.ok(savedSeller);
     }
 
+    // 🟢 LOGIN
     public ResponseEntity<?> login(String email, String password) {
         Seller seller = sellerRepository.findByEmail(email);
 
@@ -39,6 +46,9 @@ public class SellerService {
                 .body("Invalid email or password");
         }
 
-        return ResponseEntity.ok("Seller login successful");
+        // Hide password before returning
+        seller.setPassword(null);
+
+        return ResponseEntity.ok(seller);
     }
 }

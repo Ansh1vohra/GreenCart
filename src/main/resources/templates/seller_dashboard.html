@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Seller Dashboard</title>
+</head>
+<body>
+  <h2 id="welcomeText">Welcome, Seller Dashboard</h2>
+  <p id="sellerEmail"></p>
+
+  <a href="/sellers/add-product">➕ Add Product</a><br>
+  <a href="/sellers/products">📦 View My Products</a><br>
+  <a href="/sellers/orders">🧾 View Orders</a><br>
+  <button id="logoutBtn">🚪 Logout</button>
+
+  <script>
+    // Wait for page and localStorage to be ready
+    document.addEventListener("DOMContentLoaded", () => {
+      const sellerId = localStorage.getItem("sellerId");
+
+      if (!sellerId) {
+        alert("Please login first!");
+        window.location.href = "/sellers/login";
+        return;
+      }
+
+      // // Fetch seller details safely after DOM is ready
+      // fetch(`/api/sellers/${sellerId}`)
+      //   .then(res => {
+      //     if (!res.ok) throw new Error("Seller not found");
+      //     return res.json();
+      //   })
+      //   .then(seller => {
+      //     document.getElementById("welcomeText").textContent = `Welcome, ${seller.name}!`;
+      //     document.getElementById("sellerEmail").textContent = `Email: ${seller.email}`;
+      //   })
+      //   .catch(err => {
+      //     console.error(err);
+      //     alert("Failed to load seller info, please log in again.");
+      //     localStorage.removeItem("sellerId");
+      //     window.location.href = "/sellers/login";
+      //   });
+
+      // Logout functionality
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("sellerId");
+        alert("Logged out successfully!");
+        window.location.href = "/sellers/login";
+      });
+    });
+  </script>
+</body>
+</html>
